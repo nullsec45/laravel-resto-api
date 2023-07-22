@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\{RegisterController,CategoryController};
+use App\Http\Controllers\{RegisterController,CategoryController, ProductController};
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +29,12 @@ Route::group(["middleware" => "api"], function($router){
         Route::post("me",[AuthController::class,"me"])->name("me");
     });
 
-    Route::prefix("products")->group(function(){
-        Route::resource('category', CategoryController::class);
-    });
+    Route::resource('category', CategoryController::class)->parameters([
+        "category" => "id"
+    ]);
+ 
+
+    Route::resource('product', ProductController::class)->parameters([
+        "product" => "id"
+    ]);
 });

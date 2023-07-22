@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("nama");
             $table->integer("stok");
             $table->string("gambar");
+            $table->integer("price");
             $table->biginteger("category_id")->unsigned();
             $table->timestamps();
 

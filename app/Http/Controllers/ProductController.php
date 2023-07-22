@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-
+use File;
 
 class ProductController extends Controller
 {
@@ -86,21 +86,21 @@ class ProductController extends Controller
         $image=$request->file("gambar");
         $uploadFolder="products";
 
-        // $this->validateRequest($request,"update");
+        $this->validateRequest($request,"update");
         $product = Product::find($product);
-        $product->nama=$request->nama;
-        $product->stok=$request->stok;
+        $product->nama=$request->nama ?? $product->nama;
+        $product->stok=$request->stok ?? $product->stok;;
+      
         if($image){
+            if (file_exists(public_path("storage/products/".$product->gambar))) {
+                unlink(public_path("storage/products/".$product->gambar));
+            }
             $imageName="product_".strtolower($product->kode)."_".$image->hashName();
             $image->storeAs($uploadFolder, $imageName, 'public');
-            if (file_exists("app/public/storage/products".$product->gambar)) {
-                // @unlink($image_path);         
-                @unlink("app/public/storage/products".$product->gambar);
-            }
             $product->gambar=$imageName;
         }
-        $product->price=$request->price;
-        $product->category_id=$request->category_id;
+        $product->price=$request->price ?? $product->price;
+        $product->category_id=$request->category_id ?? $product->category_id;
         $product->save();
 
         return response()->json(["message" => "Successfully Updated Product"]);

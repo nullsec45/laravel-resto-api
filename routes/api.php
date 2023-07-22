@@ -29,12 +29,12 @@ Route::group(["middleware" => "api"], function($router){
         Route::post("me",[AuthController::class,"me"])->name("me");
     });
 
-    Route::resource('category', CategoryController::class)->parameters([
+    Route::resource('categories', CategoryController::class)->parameters([
         "category" => "id"
     ]);
  
 
-    Route::resource('product', ProductController::class)->parameters([
+    Route::resource('products', ProductController::class)->parameters([
         "product" => "id"
     ]);
 });

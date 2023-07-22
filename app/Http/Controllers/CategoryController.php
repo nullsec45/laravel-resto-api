@@ -17,14 +17,16 @@ class CategoryController extends Controller
      */
     use AuthUserTrait;
     
-    public function __construct()
-    {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-    }
+    // public function __construct()
+    // {
+        // auth()->shouldUse("api");
+        // $this->getAuthUser();  
+    // }
 
     public function index()
     {
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
         return response()->json(Category::all());
     }
 
@@ -36,7 +38,8 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
         $this->validateRequest($request);
 
         Category::create(["category" => $request->category]);
@@ -52,8 +55,9 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-
-        return response()->json(Category::all()->with("products")->find($id));
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+        return response()->json(Category::with("products")->find($id));
     }
 
     /**
@@ -63,18 +67,23 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+
+    public function update(Request $request,$id)
     {
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
 
-        $this->validateRequest($request);
         
-        Category::find($id)->update([
-            "category" => $request->category,
-        ]);
+        $this->validateRequest($request);
 
+
+        $category = Category::find($id);
+        $category->category = $request->category;
+        $category->save();
         return response()->json(["message" => "Successfully Updated Category"]);
     }
 
+  
     /**
      * Remove the specified resource from storage.
      *
@@ -83,6 +92,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
         $this->validateRequest($request);
 
         $category=Category::find($id);
@@ -91,13 +102,14 @@ class CategoryController extends Controller
         return response()->json(["message" => "Succesfully deleted category :".$category->category]);
     }
 
-    protected function validateRequest($request){
-        $validator=Validator::make(request()->all(),[
+    private function validateRequest($request){
+        $validator=Validator::make($request->all(), [
             "category" => "required|unique:categories",
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->messages());
+            response()->json($validator->messages(), 422)->send();
+            exit;
         }
     }
 }

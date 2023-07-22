@@ -6,32 +6,41 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function __construct(){
-        $this->middleware("auth:api",["except" =>["login"]]);
-        return auth()->shouldUse('api');
-    }
+  
 
     public function login(){
+        $this->middleware("auth:api",["except" =>["login"]]);
+        auth()->shouldUse('api');
+        
         $credentials=request(["email","password"]);
 
         if(!$token=auth()->attempt($credentials)){
-            return response()->json(["error" => "Unauthorized"], 401);
+            return response()->json(["error" => "Email atau Password salah!"], 401);
         }
 
         return $this->respondedWithToken($token);
     }
 
     public function me(){
+        $this->middleware("auth:api",["except" =>["login"]]);
+        auth()->shouldUse('api');
+        
         return response()->json(auth()->user());
     }
 
     public function logout(){
+        $this->middleware("auth:api",["except" =>["login"]]);
+        auth()->shouldUse('api');
+
         auth()->logout();
 
         return response()->json(["message" => "Successfully logged out"]);
     }
 
     public function refresh(){
+        $this->middleware("auth:api",["except" =>["login"]]);
+        auth()->shouldUse('api');
+        
         return $this->respondedWithToken(auth()->refresh());
     }
 

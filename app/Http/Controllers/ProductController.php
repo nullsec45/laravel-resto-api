@@ -16,11 +16,14 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */
+     */ 
     use AuthUserTrait;
 
     public function index()
     {
+        auth()->shouldUse("api");
+        $this->getAuthUser();
+        
         $data=DB::table("products")
             ->leftJoin("categories","products.category_id","=","categories.id")
             ->select("products.id","kode","nama","stok","gambar","categories.category as category")->get();
@@ -69,9 +72,9 @@ class ProductController extends Controller
         auth()->shouldUse("api");
         $this->getAuthUser();  
 
-        $data=DB::table("products")->where("id", $product)->get();
+        $data=DB::table("products")->where("id", $product)->first();
 
-        if(count($data) == 0){
+        if(!$data){
             return response()->json(["message" => "Product Not Found"]);
         }
         return response()->json($data);
@@ -88,6 +91,10 @@ class ProductController extends Controller
 
         $this->validateRequest($request,"update");
         $product = Product::find($product);
+
+        if(!$product){
+            return response()->json(["message" => "Product Not Found", "status" => 422], 422);
+        }
         $product->nama=$request->nama ?? $product->nama;
         $product->stok=$request->stok ?? $product->stok;;
       
@@ -113,14 +120,25 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy($product)
+    {        
         auth()->shouldUse("api");
         $this->getAuthUser();  
+
+
+        $product=Product::where("id",$product)->select("id","gambar")->first();
+
+        if(!$product){
+            return response()->json(["message" => "Product Not Found", "status" => 422], 422);
+        }
+        if($product->gambar && file_exists(public_path("storage/products/".$product->gambar))){
+            unlink(public_path("storage/products/".$product->gambar));
+        }
+        Product::destroy($product->id);
+        return response()->json(["message" => "Successfully Deleted Product", "status" => 200], 200);
     }
 
-    protected function validateRequest($request, $type="insert"){
+    private function validateRequest($request, $type="insert"){
         $rules=[
             "nama" => "required|unique:products",
             "kode" => "required|unique:products",

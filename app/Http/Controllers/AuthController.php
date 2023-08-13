@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-  
+    public function __construct(){
+        date_default_timezone_set('Asia/Jakarta');
+    }
 
     public function login(){
         $this->middleware("auth:api",["except" =>["login"]]);
@@ -45,10 +47,15 @@ class AuthController extends Controller
     }
 
     public function respondedWithToken($token){
+        $time_now=time();
+        $time_expired=time()+3600;
+
         return response()->json([
             "access_token" => $token,
             "token_type" => "bearer",
-            "expired_at" => auth("api")->factory()->getTTL() * 60
+            "duration_token" => auth("api")->factory()->getTTL() * 60,
+            "last_login" => date("H:i:s", $time_now),
+            "exipred_at" => date("H:i:s", $time_expired)
         ]);
     }
 }

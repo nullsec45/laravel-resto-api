@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\{RegisterController,CategoryController, ProductController};
+use App\Http\Controllers\{RegisterController,CategoryController, ProductController, FiturController, AuthController, RoleController, RoleFiturController};
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +30,23 @@ Route::group(["middleware" => "api"], function($router){
 
     Route::resource('categories', CategoryController::class)->parameters([
         "category" => "id"
-    ]);
+    ])->except(["create","edit"]);
  
 
     Route::resource('products', ProductController::class)->parameters([
         "product" => "id"
+    ])->except(["create","edit"]);
+    
+  
+    Route::resource('fiturs', FiturController::class)->parameters([
+            "fitur" => "id"
+    ])->except(["create","edit"]);
+
+    Route::resource('roles', RoleController::class)->parameters([
+        "role" => "id"
+    ]);
+
+    Route::resource('roles/fitur', RoleFiturController::class)->parameters([
+        "fitur" => "id"
     ]);
 });

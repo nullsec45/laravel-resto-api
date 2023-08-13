@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\{User,Role};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -21,6 +21,12 @@ class RegisterController extends Controller
             return response()->json($validator->messages(), 422)->send();
         }
 
+        $role=Role::find(request("role_id"));
+
+        if(!$role){
+             return response()->json(["message" => "Role Id Not Found!", "status" => 422], 422);
+        }
+
         $user=User::create([
             "username" => request("username"),
             "email" => request("email"),
@@ -28,7 +34,7 @@ class RegisterController extends Controller
             "role_id" => request("role_id")
         ]);
         
-        return response()->json(["message" => "Successfully register!"]);
+        return response()->json(["message" => "Successfully register!", "status" => 200], 200);
     }
 
 }

@@ -18,4 +18,8 @@ class Role extends Model
     public function users() {
         return $this->hasMany(User::class);
     }
+
+    public function roles_fitur() {
+        return $this->hasMany(RoleFitur::class);
+    }
 }

@@ -68,7 +68,7 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request,$id)
+    public function update(Request $request,$category)
     {
         auth()->shouldUse("api");
         $this->getAuthUser();  
@@ -76,8 +76,10 @@ class CategoryController extends Controller
         
         $this->validateRequest($request);
 
-
-        $category = Category::find($id);
+        $category = Category::find($category);
+        if(!$category){
+            return response()->json(["message" => "Category Not Found", "status" => 422], 422);
+        }
         $category->category = $request->category;
         $category->save();
         return response()->json(["message" => "Successfully Updated Category"]);
@@ -90,16 +92,19 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($category)
     {
         auth()->shouldUse("api");
         $this->getAuthUser();  
-        $this->validateRequest($request);
 
-        $category=Category::find($id);
+        $category=Category::find($category);
+
+        if(!$category){
+            return response()->json(["message" => "Category Not Found", "status" => 422], 422);
+        }
         $category->delete();
 
-        return response()->json(["message" => "Succesfully deleted category :".$category->category]);
+        return response()->json(["message" => "Succesfully Deleted Category","status" => 200]);
     }
 
     private function validateRequest($request){

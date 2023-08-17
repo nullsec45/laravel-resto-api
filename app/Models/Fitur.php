@@ -13,4 +13,8 @@ class Fitur extends Model
               $guarded=["id"];
 
     public $timestamps=false;
+
+    public function roles_fitur() {
+        return $this->hasMany(RoleFitur::class);
+    }
 }

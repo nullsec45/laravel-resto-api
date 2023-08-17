@@ -108,6 +108,12 @@ class FiturController extends Controller
         if(!$fitur){
             return response()->json(["message" => "Fitur Not Found", "status" => 422], 422);
         }
+        
+        if($fitur->roles_fitur()->first()){
+            foreach($fitur->roles_fitur()->get() as $role_fitur) {
+                $role_fitur->update(["fitur_id" => NULL]);
+            }
+        }
 
         $fitur->delete();
         return response()->json(["message" => "Successfully Deleted Fitur"]);

@@ -42,11 +42,13 @@ Route::group(["middleware" => "api"], function($router){
             "fitur" => "id"
     ])->except(["create","edit"]);
 
+     Route::resource('roles/fitur', RoleFiturController::class)->parameters([
+        "role_fitur" => "id"
+     ]);
+
     Route::resource('roles', RoleController::class)->parameters([
         "role" => "id"
     ]);
 
-    Route::resource('roles/fitur', RoleFiturController::class)->parameters([
-        "fitur" => "id"
-    ]);
+ 
 });

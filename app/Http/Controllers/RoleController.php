@@ -116,6 +116,13 @@ class RoleController extends Controller
         if(!$role){
             return response()->json(["message" => "Role Not Found", "status" => 422], 422);
         }
+
+        if($role->roles_fitur()->first()){
+            foreach($role->roles_fitur()->get() as $role_fitur) {
+                $role_fitur->update(["role_id" => NULL]);
+            }
+        }
+
         if($role->users()->first()){
             foreach($role->users()->get() as $user) {
                 $user->update(["role_id" => NULL]);

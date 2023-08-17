@@ -13,6 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
+        $table->bigInteger("role_id")->unsigned()->nullable()->change();
+        $table->bigInteger("fitur_id")->unsigned()->nullable()->change();
         Schema::table('roles_fitur', function (Blueprint $table) {
             $table->foreign("role_id")->references("id")->on("roles")->onDelete("cascade")->onUpdate("cascade");
             $table->foreign("fitur_id")->references("id")->on("fiturs")->onDelete("cascade")->onUpdate("cascade");

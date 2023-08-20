@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('daftar_pemesan', function (Blueprint $table) {
-            $table->string("kode_pesanan", 45);
+            $table->uuid("kode_pesanan")->primary();
             $table->primary('kode_pesanan');
-            $table->string("nama_pemesan", 100);
+            $table->string("nama_pemesan", 255);
             $table->text("catatan");
-            $table->integer("total_harga");
+            $table->integer("total_harga")->nullable();
             $table->timestamps();
         });
     }

@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('pesanan', function (Blueprint $table) {
             $table->id();
-            $table->string("kode_pesanan", 45);
+            $table->uuid("kode_pesanan");
             $table->bigInteger("product_id")->unsigned();
             
-            $table->foreign("kode_pesanan")->references("kode_pesanan")->on("daftar_pemesan");
-            $table->foreign("product_id")->references("id")->on("products");
+            $table->foreign("kode_pesanan")->references("kode_pesanan")->on("daftar_pemesan")->onDelete("cascade")->onUpdate("cascade");
+            $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 

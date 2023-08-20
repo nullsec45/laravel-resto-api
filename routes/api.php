@@ -2,7 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{RegisterController,CategoryController, ProductController, FiturController, AuthController, RoleController, RoleFiturController};
+use App\Http\Controllers\{RegisterController,
+                          CategoryController, 
+                          ProductController, 
+                          FiturController, 
+                          AuthController, 
+                          RoleController, 
+                          RoleFiturController,
+                          DaftarPemesanController,
+                          PesananController
+                        };
 
 /*
 |--------------------------------------------------------------------------
@@ -50,5 +59,9 @@ Route::group(["middleware" => "api"], function($router){
         "role" => "id"
     ]);
 
- 
+    Route::resource('daftar-pemesan', DaftarPemesanController::class)->parameters([
+        "pemesan" => "kode_pesanan"
+    ]);
+
+    Route::resource('pesanan', PesananController::class);
 });

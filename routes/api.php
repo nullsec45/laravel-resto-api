@@ -10,7 +10,8 @@ use App\Http\Controllers\{RegisterController,
                           RoleController, 
                           RoleFiturController,
                           DaftarPemesanController,
-                          PesananController
+                          PesananController,
+                          DaftarMejaController
                         };
 
 /*
@@ -64,4 +65,6 @@ Route::group(["middleware" => "api"], function($router){
     ]);
 
     Route::resource('pesanan', PesananController::class);
+
+    Route::resource('daftar-meja', DaftarMejaController::class);
 });

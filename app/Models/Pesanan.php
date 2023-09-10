@@ -13,4 +13,8 @@ class Pesanan extends Model
               $guarded=["id"];
 
    public $timestamps=false;
+
+   public function daftar_pemesan(){
+    return $this->belongsTo(Pesanan::class);
+   }
 }

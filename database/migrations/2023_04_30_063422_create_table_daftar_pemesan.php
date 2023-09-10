@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid("kode_pesanan")->primary();
             $table->primary('kode_pesanan');
             $table->string("nama_pemesan", 255);
-            $table->text("catatan");
+            $table->text("catatan")->nullable();
             $table->integer("total_harga")->nullable();
             $table->timestamps();
         });

@@ -13,6 +13,14 @@ class PesananController extends Controller
 {
     use AuthUserTrait;
 
+    public function index(){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+
+        $data=Pesanan::select()->get();
+        
+        return response()->json($data);
+    }
     public function store(Request $request){
         auth()->shouldUse("api");
         $this->getAuthUser();  
@@ -37,7 +45,62 @@ class PesananController extends Controller
 
         return response()->json(["message" => "Successfully Created Pesanan"]);
     }
-    
+
+    public function show($id){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+
+        $data=Pesanan::select()->where("id", $id);
+
+        if(!$data){
+            return response()->json(["message" => "Pesanan Not Found","status" => 422], 422);
+        }
+        
+        return response()->json($data);
+    }
+
+    public function update($kode){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+
+        $kode_pesanan=$request->kode_pesanan;
+        $Pesanan = Pesanan::select("kode_pesanan")->where("kode_pesanan", $kode)->first();
+        $KodePesanan=DaftarPemesan::find($kode_pesanan);
+
+        if(!$Pesanan){
+            return response()->json(["message" => "Pesanan Not Found", "status" => 422], 422);
+        }
+
+        if(!$KodePesanan){
+            return response()->json(["message" => "Kode Pesanan Not Found", "status" => 422], 422);
+        }
+      
+        $this->validateRequest($request, "update");
+
+        $DaftarPemesan->update([
+            "kode_pesanan" => $kode_pesanan,
+            "product_id" => $request->product_id,
+        ]);
+
+        return response()->json(["message" => "Successfully Updated Pesanan", "status" => 200], 200);
+    }
+
+    public function destroy(){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+
+        $Pesanan = Pesanan::find($kode);
+
+
+        if(!$Pesanan){
+            return response()->json(["message" => "Pesanan Not Found", "status" => 422], 422);
+        }
+       
+        $Pesanan->delete();
+
+        return response()->json(["message" => "Successfully Deleted Pesanan", "status" => 200], 200);
+    }
+
     private function validateRequest($request){
         $validator=Validator::make($request->all(), [
             "kode_pesanan" => "required",

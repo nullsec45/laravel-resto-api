@@ -14,6 +14,13 @@ class DaftarPemesan extends Model
     protected $table="daftar_pemesan",
               $primaryKey="kode_pesanan",
               $keyType="string",
-              $guarded=["id"];
+              $guarded=["kode_pesanan"];
 
+    public function kode_meja(){
+            return $this->belongsTo(DaftarMeja::class,"kode");
+    }
+
+    public function pesanan(){
+        return $this->hasMany(Pesanan::class);
+    }
 }

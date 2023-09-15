@@ -38,11 +38,14 @@ Route::group(["middleware" => "api"], function($router){
         Route::post("me",[AuthController::class,"me"])->name("me");
     });
 
+    Route::get("categories/termahal/{id}",[CategoryController::class,"termahal"])->name("category.termahal");
+    Route::get("categories/termurah/{id}",[CategoryController::class,"termurah"])->name("category.termurah");
+
     Route::resource('categories', CategoryController::class)->parameters([
         "category" => "id"
     ])->except(["create","edit"]);
  
-
+    
     Route::resource('products', ProductController::class)->parameters([
         "product" => "id"
     ])->except(["create","edit"]);

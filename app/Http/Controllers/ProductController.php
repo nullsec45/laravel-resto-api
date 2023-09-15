@@ -19,6 +19,33 @@ class ProductController extends Controller
      */ 
     use AuthUserTrait;
 
+    private function validateRequest($request, $type="insert"){
+        $rules=[
+            "nama" => "required|unique:products",
+            "kode" => "required|unique:products",
+            "stok" => "required|numeric",
+            "gambar" => "required|image:jpeg,png,jpg,gif,svg|max:2048",
+            "price" => "required|numeric",
+            "category_id" => "required|numeric"
+        ];
+
+        if($type == "update"){
+            $rules["nama"]="unique:products";
+            $rules["kode"]="unique:products";
+            $rules["stok"]="numeric";
+            $rules["gambar"]="image:jpeg,png,jpg,gif,svg|max:2048";
+            $rules["price"]="numeric";
+            $rules["category_id"]="numeric";
+        }
+
+        $validator=Validator::make($request->all(), $rules);
+
+        if($validator->fails()){
+            response()->json($validator->messages(),422)->send();
+            exit;
+        }
+    }
+
     public function index()
     {
         auth()->shouldUse("api");
@@ -138,30 +165,4 @@ class ProductController extends Controller
         return response()->json(["message" => "Successfully Deleted Product", "status" => 200], 200);
     }
 
-    private function validateRequest($request, $type="insert"){
-        $rules=[
-            "nama" => "required|unique:products",
-            "kode" => "required|unique:products",
-            "stok" => "required|numeric",
-            "gambar" => "required|image:jpeg,png,jpg,gif,svg|max:2048",
-            "price" => "required|numeric",
-            "category_id" => "required|numeric"
-        ];
-
-        if($type == "update"){
-            $rules["nama"]="unique:products";
-            $rules["kode"]="unique:products";
-            $rules["stok"]="numeric";
-            $rules["gambar"]="image:jpeg,png,jpg,gif,svg|max:2048";
-            $rules["price"]="numeric";
-            $rules["category_id"]="numeric";
-        }
-
-        $validator=Validator::make($request->all(), $rules);
-
-        if($validator->fails()){
-            response()->json($validator->messages(),422)->send();
-            exit;
-        }
-    }
 }

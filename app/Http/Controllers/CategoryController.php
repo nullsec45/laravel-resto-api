@@ -16,12 +16,17 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     use AuthUserTrait;
-    
-    // public function __construct()
-    // {
-        // auth()->shouldUse("api");
-        // $this->getAuthUser();  
-    // }
+
+    private function validateRequest($request){
+        $validator=Validator::make($request->all(), [
+            "category" => "required|unique:categories",
+        ]);
+
+        if($validator->fails()){
+            response()->json($validator->messages(), 422)->send();
+            exit;
+        }
+    }
 
     public function index()
     {
@@ -53,11 +58,16 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($category)
     {
         auth()->shouldUse("api");
         $this->getAuthUser();  
-        return response()->json(Category::with("products")->find($id));
+        $category = Category::where("id",$category)->select("id")->first();
+        if(!$category){
+            return response()->json(["message" => "Category Not Found", "status" => 422], 422);
+        }
+
+        return response()->json(Category::with("products")->find($category));
     }
 
     /**
@@ -97,7 +107,7 @@ class CategoryController extends Controller
         auth()->shouldUse("api");
         $this->getAuthUser();  
 
-        $category=Category::find($category);
+        $category=Category::where("id",$category)->select("id")->first();
 
         if(!$category){
             return response()->json(["message" => "Category Not Found", "status" => 422], 422);
@@ -107,14 +117,26 @@ class CategoryController extends Controller
         return response()->json(["message" => "Succesfully Deleted Category","status" => 200]);
     }
 
-    private function validateRequest($request){
-        $validator=Validator::make($request->all(), [
-            "category" => "required|unique:categories",
-        ]);
+    public function termahal($category){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
 
-        if($validator->fails()){
-            response()->json($validator->messages(), 422)->send();
-            exit;
-        }
+        $category=Category::find($category);
+
+        $termahal=$category->termahal;
+
+        return response()->json($termahal);
     }
+
+    public function termurah($category){
+        auth()->shouldUse("api");
+        $this->getAuthUser();  
+
+        $category=Category::find($category);
+
+        $termurah=$category->termurah;
+
+        return response()->json($termurah);
+    }
+    
 }

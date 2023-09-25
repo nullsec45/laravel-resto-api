@@ -6,6 +6,7 @@ use App\Models\Pesanan;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\DaftarPemesan;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
@@ -24,13 +25,16 @@ class PesananController extends Controller
     public function store(Request $request){
         auth()->shouldUse("api");
         $this->getAuthUser();  
+        
 
         $this->validateRequest($request);
 
-        $kode_pesanan=DaftarPemesan::find($request->kode_pesanan);
+        
+        $kode_pesanan=DB::table('daftar_pemesan')->select("kode_pesanan")->where("kode_pesanan", $request->kode_pesanan)->first();
+
         $product_id=Product::find($request->product_id);
 
-        if(!$kode_pesanan || !$product_id){
+        if(!$kode_pesanan->kode_pesanan || !$product_id){
             $message=!$kode_pesanan ? "Kode Pesanan Not Valid" : "Product Not Found";
             if(!$kode_pesanan && !$product_id){
                 $message="Kode Pesanan not Valid and Product Not Found";

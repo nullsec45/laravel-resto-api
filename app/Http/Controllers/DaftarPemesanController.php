@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DaftarMeja;
 use Illuminate\Http\Request;
 use App\Models\DaftarPemesan;
+use App\Models\Scopes\IsPaidScope;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +19,20 @@ class DaftarPemesanController extends Controller
      * @return \Illuminate\Http\Response
      */
     use AuthUserTrait;
+    private function validateRequest($request, $type="insert"){
+        $rules=[
+            "kode_meja" => "required|unique:daftar_pemesan",
+            "nama_pemesan" => "required",
+            "total_harga" => "required|numeric"
+        ];
+
+        $validator=Validator::make($request->all(), $rules);
+
+        if($validator->fails()){
+            response()->json($validator->messages(),422)->send();
+            exit;
+        }
+    }
 
     public function index()
     {
@@ -134,19 +149,12 @@ class DaftarPemesanController extends Controller
         return response()->json(["message" => "Successfully Deleted Daftar Pemesan", "status" => 200], 200);
     }
 
-    private function validateRequest($request, $type="insert"){
-        $rules=[
-            "kode_meja" => "required|unique:daftar_pemesan",
-            "nama_pemesan" => "required",
-            "total_harga" => "required|numeric"
-        ];
-
-        $validator=Validator::make($request->all(), $rules);
-
-        if($validator->fails()){
-            response()->json($validator->messages(),422)->send();
-            exit;
-        }
-    }
    
+   public function daftar_pesanan(){
+        auth()->shouldUse("api");
+        $this->getAuthUser();
+        
+        $data=DaftarPemesan::query()->withoutGlobalScopes([IsPaidScope::class])->with("daftar_pesanan")->select()->get();
+        return response()->json($data);
+   }
 }

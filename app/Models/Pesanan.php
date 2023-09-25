@@ -15,6 +15,12 @@ class Pesanan extends Model
    public $timestamps=false;
 
    public function daftar_pemesan(){
-    return $this->belongsTo(Pesanan::class);
+        return $this->belongsTo(Pesanan::class, "kode_pesanan");
    }
+
+   public function product(){
+    return $this->hasOne(Product::class);
+   }
+
+   
 }

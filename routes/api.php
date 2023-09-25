@@ -63,6 +63,7 @@ Route::group(["middleware" => "api"], function($router){
         "role" => "id"
     ]);
 
+    Route::get("daftar-pemesan/daftar-pesanan", [DaftarPemesanController::class, "daftar_pesanan"])->name("daftar_pemesan.daftar_pesanan");
     Route::resource('daftar-pemesan', DaftarPemesanController::class)->parameters([
         "pemesan" => "kode_pesanan"
     ]);

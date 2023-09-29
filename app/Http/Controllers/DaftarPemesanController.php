@@ -113,7 +113,8 @@ class DaftarPemesanController extends Controller
             "kode_meja" => $kode_meja,
             "nama_pemesan" => $request->nama_pemesan,
             "catatan" => $request->catatan,
-            "total_harga" => $request->total_harga
+            "total_harga" => $request->total_harga,
+            "is_paid" => $request->is_paid
         ]);
 
         return response()->json(["message" => "Successfully Updated Daftar Pemesan", "status" => 200], 200);

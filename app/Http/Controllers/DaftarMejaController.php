@@ -34,11 +34,13 @@ class DaftarMejaController extends Controller
     {
         $this->validateRequest($request);
 
-        DaftarMeja::create(
-                              ["kode" => $request->kode, 
-                               "kapasitas" => $request->kapasitas,
-                              ]);
+        DB::transaction(function () {
+            DaftarMeja::create(
+            ["kode" => $request->kode, 
+                "kapasitas" => $request->kapasitas,
+            ]);
 
+        });
         return response()->json(["message" => "Successfully Created Daftar Meja","status" => 200], 200);
     }
 
@@ -76,10 +78,13 @@ class DaftarMejaController extends Controller
 
         $this->validateRequest($request);
 
-        $DaftarMeja->update([
-            "kode" => $kode,
-            "kapasitas" => $request->kapasitas
-        ]);
+        DB::transaction(function () {
+            $DaftarMeja->update([
+                "kode" => $kode,
+                "kapasitas" => $request->kapasitas
+            ]);
+        });
+      
 
         $DaftarPemesan=$DaftarMeja->daftar_pemesan()->first();
         if($DaftarPemesan){
@@ -111,7 +116,9 @@ class DaftarMejaController extends Controller
             }
         }
 
-        $DaftarMeja->delete();
+       DB::transaction(function () {
+            $DaftarMeja->delete();
+       });
 
         return response()->json(["message" => "Successfully Deleted Daftar Meja","status" => 200], 200);
     }

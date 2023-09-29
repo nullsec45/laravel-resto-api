@@ -32,12 +32,14 @@ class PesananController extends Controller
             return response()->json(["message" => $message, "status" => 422], 422);
         }
 
-        Pesanan::create(
-                              ["kode_pesanan" => $request->kode_pesanan, 
-                               "product_id" => $request->product_id,
-                               "jumlah_pesanan" => $request->jumlah_pesanan,
-                               "catatan" => $request->catatan
-                              ]);
+        DB::transaction(function () {
+            Pesanan::create(
+                ["kode_pesanan" => $request->kode_pesanan, 
+                 "product_id" => $request->product_id,
+                 "jumlah_pesanan" => $request->jumlah_pesanan,
+                 "catatan" => $request->catatan
+          ]);
+        });
 
         return response()->json(["message" => "Successfully Created Pesanan"]);
     }
@@ -67,12 +69,14 @@ class PesananController extends Controller
       
         $this->validateRequest($request, "update");
 
-        $DaftarPemesan->update([
-            "kode_pesanan" => $kode_pesanan,
-            "product_id" => $request->product_id,
-            "jumlah_pesanan" => $request->jumlah_pesanan,
-            "catatan" => $request->catatan
-        ]);
+        DB::transaction(function () {
+            $DaftarPemesan->update([
+                "kode_pesanan" => $kode_pesanan,
+                "product_id" => $request->product_id,
+                "jumlah_pesanan" => $request->jumlah_pesanan,
+                "catatan" => $request->catatan
+            ]);
+        });
 
         return response()->json(["message" => "Successfully Updated Pesanan", "status" => 200], 200);
     }
@@ -84,7 +88,9 @@ class PesananController extends Controller
             return response()->json(["message" => "Pesanan Not Found", "status" => 422], 422);
         }
        
-        $Pesanan->delete();
+        DB::transaction(function () {
+            $Pesanan->delete();
+        });
 
         return response()->json(["message" => "Successfully Deleted Pesanan", "status" => 200], 200);
     }

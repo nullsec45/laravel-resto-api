@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Fitur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -36,12 +37,14 @@ class FiturController extends Controller
     {
         $this->validateRequest($request);
 
-        Fitur::create(
-            [
-                "fitur" => $request->fitur,
-                "kode" => $request->kode,
-            ]
-        );
+        DB::transaction(function () {
+            Fitur::create(
+                [
+                    "fitur" => $request->fitur,
+                    "kode" => $request->kode,
+                ]
+            );
+        });
 
         return response()->json(["message" => "Successfully Created Fitur", "status" => 200], 200);
     }
@@ -72,10 +75,13 @@ class FiturController extends Controller
         if(!$fitur){
             return response()->json(["message" => "Fitur Not Found", "status" => 422], 422);
         }
-        $fitur->fitur=$request->fitur ?? $fitur->fitur;
-        $fitur->kode=$request->kode ?? $fitur->kode;
-
-        $fitur->save();
+        DB::transaction(function () {
+            $fitur->fitur=$request->fitur ?? $fitur->fitur;
+            $fitur->kode=$request->kode ?? $fitur->kode;
+    
+            $fitur->save();
+    
+        });
 
         return response()->json(["message" => "Successfully Updated Fitur"]);
     }
@@ -100,7 +106,9 @@ class FiturController extends Controller
             }
         }
 
-        $fitur->delete();
+        DB::transaction(function () {
+            $fitur->delete();
+        });
         return response()->json(["message" => "Successfully Deleted Fitur"]);
     }
 

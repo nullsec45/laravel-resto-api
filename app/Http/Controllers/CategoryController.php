@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\{Category};
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -41,7 +42,9 @@ class CategoryController extends Controller
     {
         $this->validateRequest($request);
 
-        Category::create(["category" => $request->category]);
+        DB::transaction(function(){
+            Category::create(["category" => $request->category]);
+        });
 
         return response()->json(["message" => "Successfully Created Category"]);
     }
@@ -78,8 +81,11 @@ class CategoryController extends Controller
         if(!$category){
             return response()->json(["message" => "Category Not Found", "status" => 422], 422);
         }
-        $category->category = $request->category;
-        $category->save();
+        DB::transaction(function () {
+            $category->category = $request->category;
+            $category->save();
+        });
+      
         return response()->json(["message" => "Successfully Updated Category"]);
     }
 
@@ -97,7 +103,9 @@ class CategoryController extends Controller
         if(!$category){
             return response()->json(["message" => "Category Not Found", "status" => 422], 422);
         }
-        $category->delete();
+        DB::transaction(function () {
+            $category->delete();
+        });
 
         return response()->json(["message" => "Succesfully Deleted Category","status" => 200]);
     }

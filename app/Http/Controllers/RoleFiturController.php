@@ -52,7 +52,9 @@ class RoleFiturController extends Controller
             return response()->json(["message" => $message, "status" => 422], 422);
         }
 
-        RoleFitur::create(["role_id" => $request->role_id, "fitur_id" => $request->fitur_id]);
+        DB::transaction(function () {
+            RoleFitur::create(["role_id" => $request->role_id, "fitur_id" => $request->fitur_id]);
+        });
 
         return response()->json(["message" => "Successfully Created Fitur Role", "status" => 200], 200);
     }
@@ -101,7 +103,9 @@ class RoleFiturController extends Controller
             return response()->json(["message" => $message, "status" => 422], 422);
         }
 
+       DB::transaction(function () {
         $role_fitur->update(["role_id" => $request->role_id, "fitur_id" => $request->fitur_id]);
+       });
 
         return response()->json(["message" => "Successfully Updated Role Fitur", "status" => 200], 200);
     }
@@ -119,7 +123,11 @@ class RoleFiturController extends Controller
         if(!$role_fitur){
             return response()->json(["message" => "Role Fitur Not Found", "status" => 422], 422);
         }
-        $role_fitur->delete();
+       
+        DB::transaction(function () {
+            $role_fitur->delete();
+        });
+        
         return response()->json(["message" => "Successfully Deleted Role Fitur", "status" => 200], 200);
     }
 

@@ -66,16 +66,18 @@ class ProductController extends Controller
         $image=$request->file("gambar");
         $imageName="product_".strtolower($request->kode)."_".$image->hashName();
         $image->storeAs($uploadFolder, $imageName, 'public');
-        Product::create(
-                    [
-                        "kode" => $request->kode,
-                        "nama" => $request->nama,
-                        "stok" => $request->stok,
-                        "gambar" => $imageName,
-                        "price"  => $request->price,
-                        "category_id" => $request->category_id
-                    ]
-        );
+        DB::transaction(function () {
+                Product::create(
+                            [
+                                "kode" => $request->kode,
+                                "nama" => $request->nama,
+                                "stok" => $request->stok,
+                                "gambar" => $imageName,
+                                "price"  => $request->price,
+                                "category_id" => $request->category_id
+                            ]
+                );
+        });
 
         return response()->json(["message" => "Successfully Created Product"]);
     }
@@ -108,20 +110,24 @@ class ProductController extends Controller
         if(!$product){
             return response()->json(["message" => "Product Not Found", "status" => 422], 422);
         }
-        $product->nama=$request->nama ?? $product->nama;
-        $product->stok=$request->stok ?? $product->stok;;
-      
-        if($image){
-            if (file_exists(public_path("storage/products/".$product->gambar))) {
-                unlink(public_path("storage/products/".$product->gambar));
+        
+        DB::transaction(function () {
+            $product->nama=$request->nama ?? $product->nama;
+            $product->stok=$request->stok ?? $product->stok;;
+          
+            if($image){
+                if (file_exists(public_path("storage/products/".$product->gambar))) {
+                    unlink(public_path("storage/products/".$product->gambar));
+                }
+                $imageName="product_".strtolower($product->kode)."_".$image->hashName();
+                $image->storeAs($uploadFolder, $imageName, 'public');
+                $product->gambar=$imageName;
             }
-            $imageName="product_".strtolower($product->kode)."_".$image->hashName();
-            $image->storeAs($uploadFolder, $imageName, 'public');
-            $product->gambar=$imageName;
-        }
-        $product->price=$request->price ?? $product->price;
-        $product->category_id=$request->category_id ?? $product->category_id;
-        $product->save();
+            $product->price=$request->price ?? $product->price;
+            $product->category_id=$request->category_id ?? $product->category_id;
+            $product->save();
+        });
+       
 
         return response()->json(["message" => "Successfully Updated Product"]);
         
@@ -143,7 +149,9 @@ class ProductController extends Controller
         if($product->gambar && file_exists(public_path("storage/products/".$product->gambar))){
             unlink(public_path("storage/products/".$product->gambar));
         }
-        Product::destroy($product->id);
+        DB::transaction(function () {
+            Product::destroy($product->id);
+        });
         return response()->json(["message" => "Successfully Deleted Product", "status" => 200], 200);
     }
 

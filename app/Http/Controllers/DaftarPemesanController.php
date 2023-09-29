@@ -50,12 +50,14 @@ class DaftarPemesanController extends Controller
     {   
         $this->validateRequest($request);
 
-        DaftarPemesan::create(
-                              ["kode_meja" => $request->kode_meja, 
-                               "nama_pemesan" => $request->nama_pemesan,
-                               "catatan" => $request->catatan,
-                               "total_harga" => $request->total_harga
-                              ]);
+       DB::transaction(function () {
+            DaftarPemesan::create(
+                        ["kode_meja" => $request->kode_meja, 
+                        "nama_pemesan" => $request->nama_pemesan,
+                        "catatan" => $request->catatan,
+                        "total_harga" => $request->total_harga
+            ]);
+       });
 
         return response()->json(["message" => "Successfully Created Daftar Pemesan","status" => 200], 200);
     }
@@ -99,13 +101,15 @@ class DaftarPemesanController extends Controller
         }
         $this->validateRequest($request, "update");
 
-        $DaftarPemesan->update([
-            "kode_meja" => $kode_meja,
-            "nama_pemesan" => $request->nama_pemesan,
-            "catatan" => $request->catatan,
-            "total_harga" => $request->total_harga,
-            "is_paid" => $request->is_paid
-        ]);
+        DB::transaction(function () {
+            $DaftarPemesan->update([
+                "kode_meja" => $kode_meja,
+                "nama_pemesan" => $request->nama_pemesan,
+                "catatan" => $request->catatan,
+                "total_harga" => $request->total_harga,
+                "is_paid" => $request->is_paid
+            ]); 
+        });
 
         return response()->json(["message" => "Successfully Updated Daftar Pemesan", "status" => 200], 200);
     }
@@ -130,8 +134,10 @@ class DaftarPemesanController extends Controller
             }
         }
        
-        $DaftarPemesan->delete();
-
+        DB::transaction(function () {
+            $DaftarPemesan->delete();
+        });
+        
         return response()->json(["message" => "Successfully Deleted Daftar Pemesan", "status" => 200], 200);
     }
 

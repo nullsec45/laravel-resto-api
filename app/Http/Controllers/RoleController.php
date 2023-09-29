@@ -37,11 +37,13 @@ class RoleController extends Controller
     {
         $this->validateRequest($request);
 
-        DB::table("roles")->insert(
-            [
-               "role" => $request->role,
-            ]
-         );
+        DB::transaction(function () {
+            DB::table("roles")->insert(
+                [
+                   "role" => $request->role,
+                ]
+             );
+        });
 
          return response()->json(["message" => "Successfully Created Role", "status" => 200], 200);
     }
@@ -81,9 +83,11 @@ class RoleController extends Controller
             return response()->json(["message" => "Role Not Found", "status" => 422], 422);
         }
 
-        $role->update(["role" => $request->role]);
-        return response()->json(["message" => "Successfully Updated Role", "status" => 200], 200);
+        DB::transaction(function () {
+            $role->update(["role" => $request->role]);
+        });
 
+        return response()->json(["message" => "Successfully Updated Role", "status" => 200], 200);
     }
 
     /**
@@ -100,19 +104,21 @@ class RoleController extends Controller
             return response()->json(["message" => "Role Not Found", "status" => 422], 422);
         }
 
-        if($role->roles_fitur()->first()){
-            foreach($role->roles_fitur()->get() as $role_fitur) {
-                $role_fitur->update(["role_id" => NULL]);
+        DB::transaction(function () {
+            if($role->roles_fitur()->first()){
+                foreach($role->roles_fitur()->get() as $role_fitur) {
+                    $role_fitur->update(["role_id" => NULL]);
+                }
             }
-        }
-
-        if($role->users()->first()){
-            foreach($role->users()->get() as $user) {
-                $user->update(["role_id" => NULL]);
+    
+            if($role->users()->first()){
+                foreach($role->users()->get() as $user) {
+                    $user->update(["role_id" => NULL]);
+                }
             }
-        }
-       
-        $role->delete();
+           
+            $role->delete();
+        });
         return response()->json(["message" => "Successfully Deleted Role"]);
     }
 

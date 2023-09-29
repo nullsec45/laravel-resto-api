@@ -45,6 +45,8 @@ class PesananController extends Controller
         Pesanan::create(
                               ["kode_pesanan" => $request->kode_pesanan, 
                                "product_id" => $request->product_id,
+                               "jumlah_pesanan" => $request->jumlah_pesanan,
+                               "catatan" => $request->catatan
                               ]);
 
         return response()->json(["message" => "Successfully Created Pesanan"]);
@@ -84,6 +86,8 @@ class PesananController extends Controller
         $DaftarPemesan->update([
             "kode_pesanan" => $kode_pesanan,
             "product_id" => $request->product_id,
+            "jumlah_pesanan" => $request->jumlah_pesanan,
+            "catatan" => $request->catatan
         ]);
 
         return response()->json(["message" => "Successfully Updated Pesanan", "status" => 200], 200);

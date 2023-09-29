@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Category};
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
 
@@ -15,7 +14,6 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    use AuthUserTrait;
 
     private function validateRequest($request){
         $validator=Validator::make($request->all(), [
@@ -30,8 +28,6 @@ class CategoryController extends Controller
 
     public function index()
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
         return response()->json(Category::all());
     }
 
@@ -43,8 +39,6 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
         $this->validateRequest($request);
 
         Category::create(["category" => $request->category]);
@@ -60,8 +54,6 @@ class CategoryController extends Controller
      */
     public function show($category)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
         $category = Category::where("id",$category)->select("id")->first();
         if(!$category){
             return response()->json(["message" => "Category Not Found", "status" => 422], 422);
@@ -79,11 +71,7 @@ class CategoryController extends Controller
      */
 
     public function update(Request $request,$category)
-    {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
-        
+    {   
         $this->validateRequest($request);
 
         $category = Category::find($category);
@@ -104,9 +92,6 @@ class CategoryController extends Controller
      */
     public function destroy($category)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $category=Category::where("id",$category)->select("id")->first();
 
         if(!$category){
@@ -118,9 +103,6 @@ class CategoryController extends Controller
     }
 
     public function termahal($category){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $category=Category::find($category);
 
         $termahal=$category->termahal;

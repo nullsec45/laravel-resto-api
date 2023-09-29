@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
 
@@ -16,13 +15,9 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    use AuthUserTrait;
 
     public function index()
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $roles=Role::select()->get();
 
         if(count($roles) == 0){
@@ -40,9 +35,6 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $this->validateRequest($request);
 
         DB::table("roles")->insert(
@@ -62,9 +54,6 @@ class RoleController extends Controller
      */
     public function show($role)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $roles=DB::table("roles")->where("id", $role)->get();
 
         if(!$roles){
@@ -84,9 +73,6 @@ class RoleController extends Controller
      */
     public function update(Request $request, $role)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $this->validateRequest($request);
 
         $role = Role::find($role);
@@ -108,9 +94,6 @@ class RoleController extends Controller
      */
     public function destroy($role)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $role = Role::find($role);
 
         if(!$role){

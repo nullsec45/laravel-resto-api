@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Fitur;
 use Illuminate\Http\Request;
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
 
@@ -15,13 +14,9 @@ class FiturController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    use AuthUserTrait;
 
     public function index()
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $fiturs=Fitur::select()->get();
 
         if(count($fiturs) == 0){
@@ -39,9 +34,6 @@ class FiturController extends Controller
      */
     public function store(Request $request)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $this->validateRequest($request);
 
         Fitur::create(
@@ -62,8 +54,7 @@ class FiturController extends Controller
      */
     public function show($id)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
+      
     }
 
     /**
@@ -75,9 +66,6 @@ class FiturController extends Controller
      */
     public function update(Request $request, $fitur)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $this->validateRequest($request,"update");
         $fitur = Fitur::find($fitur);
         
@@ -100,9 +88,6 @@ class FiturController extends Controller
      */
     public function destroy($fitur)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $fitur = Fitur::find($fitur);
 
         if(!$fitur){

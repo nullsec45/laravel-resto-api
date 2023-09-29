@@ -7,28 +7,18 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\DaftarPemesan;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
 class PesananController extends Controller
 {
-    use AuthUserTrait;
 
     public function index(){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $data=Pesanan::select()->get();
         
         return response()->json($data);
     }
     public function store(Request $request){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-        
-
         $this->validateRequest($request);
-
         
         $kode_pesanan=DB::table('daftar_pemesan')->select("kode_pesanan")->where("kode_pesanan", $request->kode_pesanan)->first();
 
@@ -52,10 +42,7 @@ class PesananController extends Controller
         return response()->json(["message" => "Successfully Created Pesanan"]);
     }
 
-    public function show($id){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
+    public function show($id){ 
         $data=Pesanan::select()->where("id", $id);
 
         if(!$data){
@@ -66,9 +53,6 @@ class PesananController extends Controller
     }
 
     public function update($kode){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $kode_pesanan=$request->kode_pesanan;
         $Pesanan = Pesanan::select("kode_pesanan")->where("kode_pesanan", $kode)->first();
         $KodePesanan=DaftarPemesan::find($kode_pesanan);
@@ -93,12 +77,8 @@ class PesananController extends Controller
         return response()->json(["message" => "Successfully Updated Pesanan", "status" => 200], 200);
     }
 
-    public function destroy(){
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
+    public function destroy(){ 
         $Pesanan = Pesanan::find($kode);
-
 
         if(!$Pesanan){
             return response()->json(["message" => "Pesanan Not Found", "status" => 422], 422);

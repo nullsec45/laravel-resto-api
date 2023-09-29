@@ -21,9 +21,6 @@ class RoleFiturController extends Controller
 
     public function index()
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $roles_fitur=RoleFitur::select()->get();
 
 
@@ -41,10 +38,7 @@ class RoleFiturController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-        
+    {   
         $this->validateRequest($request);
 
         $role_id=Role::find($request->role_id);
@@ -71,9 +65,6 @@ class RoleFiturController extends Controller
      */
     public function show($role_fitur)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $roles_fitur=RoleFitur::find($role_fitur);
 
         if(!$roles_fitur){
@@ -92,9 +83,6 @@ class RoleFiturController extends Controller
      */
     public function update(Request $request, $role_fitur)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $this->validateRequest($request);
 
         $role=Role::find($request->role_id);
@@ -126,9 +114,6 @@ class RoleFiturController extends Controller
      */
     public function destroy($id)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $role_fitur=RoleFitur::find($role_fitur);
 
         if(!$role_fitur){

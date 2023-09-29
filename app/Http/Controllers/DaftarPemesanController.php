@@ -18,7 +18,6 @@ class DaftarPemesanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    use AuthUserTrait;
     private function validateRequest($request, $type="insert"){
         $rules=[
             "kode_meja" => "required|unique:daftar_pemesan",
@@ -35,10 +34,7 @@ class DaftarPemesanController extends Controller
     }
 
     public function index()
-    {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-        
+    {  
         $data=DB::table("daftar_pemesan")->select()->get();
 
         return response()->json($data);
@@ -52,9 +48,6 @@ class DaftarPemesanController extends Controller
      */
     public function store(Request $request)
     {   
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $this->validateRequest($request);
 
         DaftarPemesan::create(
@@ -75,9 +68,6 @@ class DaftarPemesanController extends Controller
      */
     public function show($kode)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $data=DB::table("daftar_pemesan")->where("kode_pesanan", $kode)->first();
 
         if(!$data){
@@ -128,12 +118,7 @@ class DaftarPemesanController extends Controller
      */
     public function destroy($kode)
     {
-        
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $DaftarPemesan = DaftarPemesan::find($kode);
-
 
         if(!$DaftarPemesan){
             return response()->json(["message" => "Daftar Pemesan Not Found", "status" => 422], 422);
@@ -152,9 +137,6 @@ class DaftarPemesanController extends Controller
 
    
    public function daftar_pesanan(){
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-        
         $data=DaftarPemesan::query()->withoutGlobalScopes([IsPaidScope::class])->with("daftar_pesanan")->select()->get();
         return response()->json($data);
    }

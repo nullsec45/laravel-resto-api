@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use File;
@@ -17,7 +16,6 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */ 
-    use AuthUserTrait;
 
     private function validateRequest($request, $type="insert"){
         $rules=[
@@ -47,10 +45,7 @@ class ProductController extends Controller
     }
 
     public function index()
-    {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-        
+    {        
         $data=DB::table("products")
             ->leftJoin("categories","products.category_id","=","categories.id")
             ->select("products.id","kode","nama","stok","gambar","categories.category as category")->get();
@@ -65,9 +60,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $this->validateRequest($request);
 
         $uploadFolder="products";
@@ -96,9 +88,6 @@ class ProductController extends Controller
      */
     public function show($product)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $data=DB::table("products")->where("id", $product)->first();
 
         if(!$data){
@@ -110,9 +99,6 @@ class ProductController extends Controller
   
     public function update(Request $request, $product)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $image=$request->file("gambar");
         $uploadFolder="products";
 
@@ -149,10 +135,6 @@ class ProductController extends Controller
      */
     public function destroy($product)
     {        
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
-
         $product=Product::where("id",$product)->select("id","gambar")->first();
 
         if(!$product){

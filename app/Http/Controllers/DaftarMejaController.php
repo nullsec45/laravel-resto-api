@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\DaftarMeja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\{AuthUserTrait};
 use Illuminate\Support\Facades\Validator;
 
 
@@ -17,13 +16,9 @@ class DaftarMejaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    use AuthUserTrait;
 
     public function index()
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-        
         $data=DB::table("daftar_meja")->select()->get();
 
         return response()->json($data);
@@ -37,9 +32,6 @@ class DaftarMejaController extends Controller
      */
     public function store(Request $request)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $this->validateRequest($request);
 
         DaftarMeja::create(
@@ -58,9 +50,6 @@ class DaftarMejaController extends Controller
      */
     public function show($kode)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();  
-
         $data=DaftarMeja::select()->where("kode", $kode)->first();
 
         if(!$data){
@@ -78,10 +67,6 @@ class DaftarMejaController extends Controller
      */
     public function update(Request $request, $kode)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
-
         $DaftarMeja=DaftarMeja::find($kode);
 
         if(!$DaftarMeja){
@@ -113,9 +98,6 @@ class DaftarMejaController extends Controller
      */
     public function destroy($kode)
     {
-        auth()->shouldUse("api");
-        $this->getAuthUser();
-
         $DaftarMeja=DaftarMeja::find($kode);
 
         if(!$DaftarMeja){

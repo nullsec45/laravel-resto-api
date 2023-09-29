@@ -38,37 +38,41 @@ Route::group(["middleware" => "api"], function($router){
         Route::post("me",[AuthController::class,"me"])->name("me");
     });
 
-    Route::get("categories/termahal/{id}",[CategoryController::class,"termahal"])->name("category.termahal");
-    Route::get("categories/termurah/{id}",[CategoryController::class,"termurah"])->name("category.termurah");
-
-    Route::resource('categories', CategoryController::class)->parameters([
-        "category" => "id"
-    ])->except(["create","edit"]);
- 
+    Route::group(['middleware' => ['auth-api']], function () {
+        Route::get("categories/termahal/{id}",[CategoryController::class,"termahal"])->name("category.termahal");
+        Route::get("categories/termurah/{id}",[CategoryController::class,"termurah"])->name("category.termurah");
     
-    Route::resource('products', ProductController::class)->parameters([
-        "product" => "id"
-    ])->except(["create","edit"]);
+        Route::resource('categories', CategoryController::class)->parameters([
+            "category" => "id"
+        ])->except(["create","edit"])->middleware("auth-api");
+     
+        
+        Route::resource('products', ProductController::class)->parameters([
+            "product" => "id"
+        ])->except(["create","edit"]);
+        
+      
+        Route::resource('fiturs', FiturController::class)->parameters([
+                "fitur" => "id"
+        ])->except(["create","edit"]);
     
-  
-    Route::resource('fiturs', FiturController::class)->parameters([
-            "fitur" => "id"
-    ])->except(["create","edit"]);
+         Route::resource('roles/fitur', RoleFiturController::class)->parameters([
+            "role_fitur" => "id"
+         ]);
+    
+        Route::resource('roles', RoleController::class)->parameters([
+            "role" => "id"
+        ]);
+    
+        Route::get("daftar-pemesan/daftar-pesanan", [DaftarPemesanController::class, "daftar_pesanan"])->name("daftar_pemesan.daftar_pesanan");
+        Route::resource('daftar-pemesan', DaftarPemesanController::class)->parameters([
+            "pemesan" => "kode_pesanan"
+        ]);
+    
+        Route::resource('pesanan', PesananController::class);
+    
+        Route::resource('daftar-meja', DaftarMejaController::class);
+    });
 
-     Route::resource('roles/fitur', RoleFiturController::class)->parameters([
-        "role_fitur" => "id"
-     ]);
-
-    Route::resource('roles', RoleController::class)->parameters([
-        "role" => "id"
-    ]);
-
-    Route::get("daftar-pemesan/daftar-pesanan", [DaftarPemesanController::class, "daftar_pesanan"])->name("daftar_pemesan.daftar_pesanan");
-    Route::resource('daftar-pemesan', DaftarPemesanController::class)->parameters([
-        "pemesan" => "kode_pesanan"
-    ]);
-
-    Route::resource('pesanan', PesananController::class);
-
-    Route::resource('daftar-meja', DaftarMejaController::class);
+   
 });
